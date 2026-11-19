@@ -5,7 +5,7 @@ import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "src"))
 
-from splits import assert_no_neuron_leakage, neuron_grouped_folds
+from splits import assert_no_neuron_leakage, neuron_grouped_folds, stimulated_neuron_folds
 
 
 def _make_all_pairs(neurons):
@@ -54,6 +54,35 @@ def test_deterministic_with_seed():
     for (tr_a, te_a), (tr_b, te_b) in zip(folds_a, folds_b):
         assert np.array_equal(tr_a, tr_b)
         assert np.array_equal(te_a, te_b)
+
+
+def test_stimulated_neuron_folds_every_pair_tested_exactly_once():
+    neurons = [f"N{i:03d}" for i in range(20)]
+    upstream, downstream = _make_all_pairs(neurons)
+    folds = stimulated_neuron_folds(upstream, n_splits=4, seed=0)
+    test_counts = np.zeros(len(upstream), dtype=int)
+    for _, test_idx in folds:
+        test_counts[test_idx] += 1
+    assert np.all(test_counts == 1), "every pair should be tested in exactly one fold"
+
+
+def test_stimulated_neuron_folds_only_upstream_held_out():
+    neurons = [f"N{i:03d}" for i in range(20)]
+    upstream, downstream = _make_all_pairs(neurons)
+    folds = stimulated_neuron_folds(upstream, n_splits=4, seed=0)
+    for train_idx, test_idx in folds:
+        train_up = set(upstream[train_idx])
+        test_up = set(upstream[test_idx])
+        assert not (train_up & test_up), "upstream (stimulated) neurons must not repeat between train/test"
+        train_down = set(downstream[train_idx])
+        test_down = set(downstream[test_idx])
+        # Downstream neurons ARE expected to repeat - this is the documented,
+        # deliberate trade-off versus neuron_grouped_folds.
+        assert train_down & test_down, (
+            "this test fixture (all-pairs over a shared neuron set) should show downstream "
+            "overlap by construction; if this fails, stimulated_neuron_folds may have "
+            "accidentally become as strict as neuron_grouped_folds"
+        )
 
 
 def test_leakage_assertion_catches_real_leak():

@@ -1,0 +1,67 @@
+Real pair universe: 90902 directed pairs over 302 real neurons
+Stand-in label (chemical synapse present, from real White 1986 data): 2266 positive / 88636 negative (2.5% positive)
+NOTE: this label is a stand-in for audit purposes only. It is NOT the propagation
+target. Real class balance for the actual research question is unknown until
+docs/fetch_propagation_data.md is completed.
+
+======================================================================
+STRICT split: neuron_grouped_folds (both neurons held out)
+======================================================================
+  Fold 0: n_train=57840 (pos=1345, neg=56495), n_test=3660 (pos=112, neg=3548)
+    test-fold unique upstream neurons=61, unique downstream neurons=61
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: False
+    [OK] verified: zero neuron leakage (both upstream and downstream unseen in test)
+  Fold 1: n_train=57840 (pos=1461, neg=56379), n_test=3660 (pos=71, neg=3589)
+    test-fold unique upstream neurons=61, unique downstream neurons=61
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: False
+    [OK] verified: zero neuron leakage (both upstream and downstream unseen in test)
+  Fold 2: n_train=58322 (pos=1383, neg=56939), n_test=3540 (pos=106, neg=3434)
+    test-fold unique upstream neurons=60, unique downstream neurons=60
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: False
+    [OK] verified: zero neuron leakage (both upstream and downstream unseen in test)
+  Fold 3: n_train=58322 (pos=1497, neg=56825), n_test=3540 (pos=65, neg=3475)
+    test-fold unique upstream neurons=60, unique downstream neurons=60
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: False
+    [OK] verified: zero neuron leakage (both upstream and downstream unseen in test)
+  Fold 4: n_train=58322 (pos=1537, neg=56785), n_test=3540 (pos=71, neg=3469)
+    test-fold unique upstream neurons=60, unique downstream neurons=60
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: False
+    [OK] verified: zero neuron leakage (both upstream and downstream unseen in test)
+  Total pairs ever placed in a test fold: 17940 / 90902 (19.7% of all pairs - the rest are dropped every fold because they straddle a held-out and a training neuron)
+
+======================================================================
+SECONDARY split: stimulated_neuron_folds (upstream/stimulated neuron held out only)
+======================================================================
+  Fold 0: n_train=72541 (pos=1750, neg=70791), n_test=18361 (pos=516, neg=17845)
+    test-fold unique upstream neurons=61, unique downstream neurons=302
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: True
+    [expected] downstream neurons DO repeat between train/test - this is the known, documented trade-off of leave-stimulated-neuron-out (see splits.py docstring)
+  Fold 1: n_train=72541 (pos=1842, neg=70699), n_test=18361 (pos=424, neg=17937)
+    test-fold unique upstream neurons=61, unique downstream neurons=302
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: True
+    [expected] downstream neurons DO repeat between train/test - this is the known, documented trade-off of leave-stimulated-neuron-out (see splits.py docstring)
+  Fold 2: n_train=72842 (pos=1759, neg=71083), n_test=18060 (pos=507, neg=17553)
+    test-fold unique upstream neurons=60, unique downstream neurons=302
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: True
+    [expected] downstream neurons DO repeat between train/test - this is the known, documented trade-off of leave-stimulated-neuron-out (see splits.py docstring)
+  Fold 3: n_train=72842 (pos=1867, neg=70975), n_test=18060 (pos=399, neg=17661)
+    test-fold unique upstream neurons=60, unique downstream neurons=302
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: True
+    [expected] downstream neurons DO repeat between train/test - this is the known, documented trade-off of leave-stimulated-neuron-out (see splits.py docstring)
+  Fold 4: n_train=72842 (pos=1846, neg=70996), n_test=18060 (pos=420, neg=17640)
+    test-fold unique upstream neurons=60, unique downstream neurons=302
+    upstream neuron overlap train/test: False  downstream neuron overlap train/test: True
+    [expected] downstream neurons DO repeat between train/test - this is the known, documented trade-off of leave-stimulated-neuron-out (see splits.py docstring)
+  Total pairs ever placed in a test fold: 90902 / 90902 (100.0% of all pairs - every pair is tested exactly once, since only the upstream neuron determines fold membership)
+
+======================================================================
+CONCLUSION
+======================================================================
+The strict both-neurons-held-out split uses roughly 1/n_splits of all pairs as test
+data per fold and drops the rest (straddling pairs) from that fold's training set too -
+this is the correct primary evaluation, but discards real data. The
+stimulated-neuron-only split retains every pair in some fold's test set, at the cost of
+letting downstream neurons repeat between train and test. Both are reported on the real
+propagation target once obtained, with the strict split as the primary, trusted number
+and the stimulated-only split as a secondary, explicitly-weaker comparison - never a
+silent substitute.

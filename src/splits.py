@@ -70,6 +70,52 @@ def neuron_grouped_folds(
     return folds
 
 
+def stimulated_neuron_folds(
+    upstream: np.ndarray,
+    n_splits: int = 5,
+    seed: int = 0,
+) -> list[tuple[np.ndarray, np.ndarray]]:
+    """Split pair-level data by holding out whole UPSTREAM ("stimulated")
+    neurons only, leaving downstream neurons free to repeat between train
+    and test.
+
+    Scientific justification (not a silent weakening of the design): in
+    Randi et al.'s experiment, a neuron is optogenetically stimulated
+    (upstream) while many downstream neurons are observed simultaneously
+    via whole-brain imaging. Only a subset of all neurons were ever used
+    as a stimulation target at all (stimulation requires a usable
+    optogenetic line and optical access for that specific neuron), so a
+    scientifically meaningful generalization question is: "does a model
+    trained on connectivity patterns from the neurons we *could* stimulate
+    generalize to predict the propagation pattern of a neuron we've never
+    stimulated?" This is a real, asymmetric limitation of the experimental
+    design, not an artificial relaxation invented to inflate fold sizes.
+
+    This is a materially weaker leakage guarantee than
+    `neuron_grouped_folds`: a downstream neuron CAN appear in both a
+    fold's train and test pairs (just paired with a different, held-out
+    upstream neuron each time), so a model could still partly exploit
+    "neuron X is generally easy/hard to activate" patterns learned from
+    training pairs where X was downstream. Use `neuron_grouped_folds` as
+    the primary, strictest evaluation; use this as a secondary,
+    explicitly-labeled comparison only when the strict split leaves too
+    little data to be informative - never substitute this silently for
+    the stricter split in reported headline results.
+    """
+    all_upstream = np.unique(upstream)
+    rng = np.random.default_rng(seed)
+    shuffled = rng.permutation(all_upstream)
+    neuron_fold = {n: i % n_splits for i, n in enumerate(shuffled)}
+    fold_of = np.array([neuron_fold[n] for n in upstream])
+
+    folds = []
+    for k in range(n_splits):
+        test_idx = np.where(fold_of == k)[0]
+        train_idx = np.where(fold_of != k)[0]
+        folds.append((train_idx, test_idx))
+    return folds
+
+
 def assert_no_neuron_leakage(
     upstream: np.ndarray,
     downstream: np.ndarray,
