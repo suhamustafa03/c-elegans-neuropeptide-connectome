@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.DS_Store
+# Derived propagation data: license status of the upstream source is
+# unclear (see docs/DATA_LICENSES.md); never commit this.
+data/derived/
+# Large raw OSF archives if ever downloaded into this repo by mistake.
+data/raw/propagation/
+*.tar.gz
