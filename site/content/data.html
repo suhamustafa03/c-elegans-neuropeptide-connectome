@@ -1,0 +1,45 @@
+<section id="source">
+  <h2>Source dataset &mdash; verified and used</h2>
+  <div class="card">
+    <span class="status-tag done">Verified &amp; used</span>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Source</th><th scope="col">Provides</th><th scope="col">License</th></tr></thead>
+      <tbody>
+        <tr><td>Atanas, Kim et al. 2023, <a href="https://doi.org/10.5281/zenodo.8185377" target="_blank" rel="noopener">Zenodo 8185377, v2</a> (<code>processed_h5.tar.bz2</code>)</td><td>Whole-brain GCaMP calcium traces + time-aligned behavior channels, 91 files</td><td><strong>CC BY 3.0 US</strong>, verified via both the rendered Zenodo page and the machine-readable API</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">Downloaded once (747,188,437 bytes), MD5-verified against the Zenodo record (<code>f76bb089208db62eb4dd30785b525eda</code>) before use. A separate, newer Zenodo revision (record 19388374, v4) that adds NeuroPAL neuron-identity label files was checked and found to carry <strong>no license metadata at all</strong> &mdash; its files are explicitly not used here. Kept outside Git throughout; nothing from the raw archive is committed to this repository.</p>
+  </div>
+</section>
+
+<section id="contents">
+  <h2>What the archive actually contains</h2>
+  <div class="card">
+    <p>91 files total: <strong>80 real recordings</strong> used in this analysis, plus <strong>11 "scrambled-control" files</strong> in a separate subfolder, with filenames duplicating 11 of the 80 real recordings (presumably a shuffled/surrogate set for the original lab's own use). The scrambled files are kept fully separate here and are <strong>not used</strong> in this analysis &mdash; their exact intended role was not independently verified, so they are not treated as a negative control.</p>
+    <p>Each real recording is a single <code>.h5</code> file: per-neuron GCaMP calcium traces (<code>gcamp/trace_array</code>, timepoints &times; neurons, 82&ndash;163 neurons depending on the recording) plus time-aligned behavior channels (velocity, angular velocity, head angle, body-angle variants, pumping, worm curvature, reversal state and events). Behavior channels are pre-aligned to the neural sampling rate in <strong>every</strong> recording checked &mdash; confirmed directly, not assumed.</p>
+  </div>
+</section>
+
+<section id="no-identity">
+  <h2>Why this cannot be a connectome-linked question</h2>
+  <div class="card not-done">
+    <span class="status-tag pending">Ruled out, not attempted</span>
+    <p>Neuron indices in these files are anonymous per-recording numbers (0&ndash;118, etc.) &mdash; there is no verified mapping from an index to a named neuron identity in this archive's main files. A separate label-mapping file (<code>dict_neuropal_label.jld2</code>, CC BY 3.0 US, same record) was downloaded and MD5-verified, but its contents use Julia's JLD2 object-serialization format: reading it with <code>h5py</code> raised <code>TypeError: Unknown reference type</code> on every type-defining attribute, so its structure could not be decoded without installing Julia's own <code>JLD2.jl</code> &mdash; explicitly ruled out rather than attempted. <strong>No neuron-identity claim is made anywhere in this analysis</strong>, and all neural features are population-level (recording-wide summary statistics and per-recording PCA components), never tied to a specific neuron index.</p>
+  </div>
+</section>
+
+<section id="marker-free">
+  <h2>Marker-free vs. marker-present, not "spontaneous" vs. "stimulated"</h2>
+  <div class="card">
+    <p>37 of the 80 recordings contain a <code>stim_begin_confocal</code> timestamp; 43 do not. The source paper describes 30 heat-stimulus datasets and a separate "animals without any stimulus" comparison group &mdash; corroborating, but not exactly matching, this archive's 37/43 split (the counts differ and no source checked explains why). <strong>Recordings are therefore labeled "marker-free" and "marker-present" throughout this site, never "spontaneous" or "stimulated"</strong> &mdash; that stronger claim isn't established by anything inspected.</p>
+  </div>
+</section>
+
+<section id="prior-work">
+  <h2>Relationship to the original paper's own analysis</h2>
+  <div class="card">
+    <p>Atanas &amp; Kim et al. (2023, <em>Cell</em>, Fig. 2D) already train linear decoders predicting velocity at various time offsets from current neural activity, reporting that past velocity (up to ~20s back) could be decoded but future velocity could not. See <a href="interpretation.html">Interpretation</a> for exactly how this project's protocol differs from and extends that specific analysis.</p>
+  </div>
+</section>

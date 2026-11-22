@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · Behavior Forecasting</title>
+<meta name="description" content="Project overview: whole-brain activity and behavior forecasting in C. elegans.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark theme-overview">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="status-banner" role="note">
+  <strong>This analysis is complete and run on real, license-verified data</strong> &mdash; it tests
+  whole-brain activity vs. behavior forecasting, not signal propagation or connectome structure.
+  See <a href="results.html">Results</a> and <a href="status.html">Status</a>.
+</div>
+<div class="site-header">
+  <div class="site-header-inner">
+    <a class="site-title" href="index.html">Behavior Forecasting<span class="dot">.</span></a>
+  </div>
+  <nav class="site-nav" aria-label="Primary"><a href="overview.html" class="active" aria-current="page">Overview</a>
+    <a href="data.html">Data</a>
+    <a href="methods.html">Methods</a>
+    <a href="results.html">Results</a>
+    <a href="interpretation.html">Interpretation</a>
+    <a href="status.html">Status</a>
+    <a href="reproducibility.html">Reproducibility</a></nav>
+</div>
+<div class="page-head">
+  <div class="eyebrow">C. elegans &middot; neural activity &amp; behavior forecasting</div>
+  <h1>Project overview</h1>
+  <p class="dek">The research question, why it matters, scope, and how this site is organized.</p>
+</div>
+<main id="main-content" tabindex="-1">
+<p class="back-to-welcome"><a href="index.html">&larr; Back to welcome</a></p>
+
+<section id="question">
+  <h2>Research question</h2>
+  <div class="card">
+    <p>Within individual whole-brain calcium-imaging recordings of freely behaving <em>C. elegans</em>, does current and recent whole-brain neural population activity improve out-of-sample, time-blocked <strong>forecasting</strong> of future locomotor velocity and reversal onset, beyond a behavior-history-only baseline?</p>
+  </div>
+</section>
+
+<section id="why">
+  <h2>Why this question, and why it changed</h2>
+  <div class="card">
+    <p>This project originally asked a different question: whether an inferred neuropeptide connectome improves prediction of <em>measured</em> neuron-to-neuron signal propagation (Randi et al. 2023 data). That data's reuse terms turned out to be unresolved, and rather than use it without a clear license or wait indefinitely on an author reply, the project searched for a license-clear substitute and found one: Atanas, Kim et al.'s (2023, <em>Cell</em>) whole-brain activity dataset, explicitly CC BY 3.0 US licensed. That dataset cannot support a connectome-linked propagation question &mdash; it has no stimulation-response structure and no usable neuron-identity mapping (see <a href="data.html">Data</a>) &mdash; so the question itself had to change, not just the data source.</p>
+    <p>The resulting question is deliberately narrower and already has a close precedent: Atanas &amp; Kim et al. (2023, Fig. 2D) report that linear decoders could predict <em>past</em> velocity from current neural activity but <strong>could not predict future velocity</strong>. This project is a leakage-aware replication and extension of that specific result &mdash; not a claim of new general discovery about brain&ndash;behavior links. See <a href="interpretation.html">Interpretation</a> for exactly how it extends that prior work.</p>
+  </div>
+</section>
+
+<section id="scope">
+  <h2>Scope and honesty up front</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>This is an <strong>observational, associational</strong> comparison. A feature's predictive contribution is evidence of statistical association, never proof that it causes the outcome.</li>
+      <li>This analysis does <strong>not</strong> test signal propagation or connectome structure of any kind. The earlier neuropeptide-connectome direction is <strong>paused, not completed</strong> &mdash; see <a href="status.html">Status</a>.</li>
+      <li>Neuron indices in this activity data are anonymous per-recording numbers, not verified identities &mdash; no claim here links a specific named neuron to a result.</li>
+      <li>Recordings, not animals, are the reporting unit throughout; animal identity is not established from the source files.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="map">
+  <h2>How this site is organized</h2>
+  <div class="card">
+    <table>
+      <tbody>
+        <tr><td style="width:160px;"><a href="data.html">Data</a></td><td>The verified, CC BY 3.0 US licensed source, what it does and doesn't contain, and why the connectome-linked question isn't feasible with it.</td></tr>
+        <tr><td><a href="methods.html">Methods</a></td><td>Time-aware segmentation, forecast targets, population-level features, models, and the leakage-safe evaluation protocol.</td></tr>
+        <tr><td><a href="results.html">Results</a></td><td>Exact, verified numbers for velocity and reversal-onset forecasting, under both evaluation schemes.</td></tr>
+        <tr><td><a href="interpretation.html">Interpretation</a></td><td>What the results do and don't support, and the precise relationship to prior published work.</td></tr>
+        <tr><td><a href="status.html">Status</a></td><td>What's built, tested, and run on real data &mdash; and the paused earlier direction, clearly labeled.</td></tr>
+        <tr><td><a href="reproducibility.html">Reproducibility</a></td><td>Setup, tests, and how to reproduce the analysis.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="page-nav-footer"><span></span><a href="data.html" style="text-align:right;"><span class="dir">Next &rarr;</span>Data</a></div>
+</main>
+<footer class="site-footer">
+  Independent portfolio/application project &middot; not a validated scientific publication &middot;
+  <a href="https://doi.org/10.5281/zenodo.8185377" target="_blank" rel="noopener">Activity data: Atanas, Kim et al. 2023, Zenodo 8185377 v2 (CC BY 3.0 US)</a> &middot;
+  <a href="https://doi.org/10.1016/j.cell.2023.07.035" target="_blank" rel="noopener">Atanas &amp; Kim et al., Cell (2023)</a>
+</footer>
+</body>
+</html>

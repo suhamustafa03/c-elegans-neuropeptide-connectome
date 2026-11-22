@@ -1,0 +1,47 @@
+<section id="relation-to-prior-work">
+  <h2>Relationship to Atanas &amp; Kim et al. (2023)</h2>
+  <div class="card">
+    <p>Atanas &amp; Kim et al. (2023, <em>Cell</em>, Fig. 2D) already trained linear decoders predicting velocity at various time offsets from current neural activity, and reported that they could decode <em>past</em> velocity (looking back up to ~20s) but <strong>could not predict future velocity from current neural activity</strong>. This project's velocity result (<a href="results.html">Results</a>) is a <strong>leakage-aware replication of that specific negative finding</strong>, not an independent or novel discovery &mdash; and it extends that prior analysis in four specific ways:</p>
+    <ul class="plain">
+      <li>An explicit <strong>behavior-history-only</strong> baseline and a <strong>combined</strong> model, isolating neural activity's marginal contribution over behavior history &mdash; not clearly separated in the original Fig. 2D decoder comparison.</li>
+      <li>An explicit <strong>purge-gapped, leakage-safe, time-blocked</strong> cross-validation protocol, with a fully prospective forward-chaining variant reported alongside it.</li>
+      <li>Extension to <strong>reversal onset</strong>, a rare binary event, which Fig. 2D does not address.</li>
+      <li><strong>Population-level neural features only</strong> &mdash; never a fixed neuron index &mdash; since no neuron-identity mapping is used or available here, unlike the original paper, which has NeuroPAL identities for a labeled subset.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="what-is-supported">
+  <h2>What the results support</h2>
+  <div class="card">
+    <ul class="plain">
+      <li><strong>Velocity:</strong> behavior history alone is the best available predictor of future velocity among the models tested; neural population activity does not add value, and in several conditions hurts performance relative to behavior history alone. This null result replicates, under a stricter leakage-aware protocol, what the source paper already reported.</li>
+      <li><strong>Reversal onset:</strong> neural population activity alone forecasts reversal onset above its own recording's base rate in every recording where the comparison was defined (42/42 and 37/37, across both CV schemes) &mdash; a real, consistent, above-baseline signal. Behavior history alone is nonetheless the stronger single predictor, and combining the two feature blocks does not consistently improve on behavior-only (a per-recording coin-flip, median difference &asymp;&plusmn;0.01&ndash;0.02 PR-AUC).</li>
+    </ul>
+  </div>
+</section>
+
+<section id="what-is-not-supported">
+  <h2>What the results do not support</h2>
+  <div class="card not-done">
+    <ul class="plain">
+      <li><strong>No causal claim.</strong> All results are associational: a feature improving forecast accuracy is not evidence that it drives the behavior.</li>
+      <li><strong>No "independent" or statistically tested claim</strong> about neural activity's contribution to reversal-onset forecasting. "Neural-only beats prevalence in every recording tested" is a real, verified paired result that reproduced exactly across two independent runs of the pipeline; "combining neural and behavioral features adds independent value" is not supported &mdash; the paired comparison shows combined vs. behavior-only is close to a coin flip, with the exact win count itself shifting between reruns (a sign the effect is genuinely near zero, not just unmeasured), and no formal significance test was run on that difference.</li>
+      <li><strong>No connectome, synaptic, or neuropeptide claim of any kind.</strong> This analysis does not test signal propagation or wiring-diagram structure &mdash; see <a href="status.html">Status</a> for the paused earlier direction that did.</li>
+      <li><strong>No animal-level claim.</strong> All counts and splits are of recordings (80 total); animal identity is not established in the source files.</li>
+      <li><strong>No claim that marker-free recordings are "spontaneous."</strong> That label is not independently verified &mdash; see <a href="data.html">Data</a>.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="limitations">
+  <h2>Limitations worth naming directly</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>11.2% of recorded frames were discarded by the largest-segment rule, concentrated in 18 recordings that each lost roughly half their frames to a single mid-recording gap &mdash; a systematic pattern (likely a two-part session structure), not random data loss, but unexplored further here.</li>
+      <li>A single, fixed forecast horizon (5s) and history window (10s) were used throughout; results at other horizons were not explored and may differ.</li>
+      <li>Neural features are necessarily coarse (population summary statistics and per-recording PCA) because no neuron-identity mapping was usable &mdash; a richer, identity-aware feature set might behave differently, and this analysis cannot speak to that.</li>
+      <li>Ridge and logistic regression were the only models used; no nonlinear model was compared.</li>
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,44 @@
+<p class="back-to-welcome"><a href="index.html">&larr; Back to welcome</a></p>
+
+<section id="question">
+  <h2>Research question</h2>
+  <div class="card">
+    <p>Within individual whole-brain calcium-imaging recordings of freely behaving <em>C. elegans</em>, does current and recent whole-brain neural population activity improve out-of-sample, time-blocked <strong>forecasting</strong> of future locomotor velocity and reversal onset, beyond a behavior-history-only baseline?</p>
+  </div>
+</section>
+
+<section id="why">
+  <h2>Why this question, and why it changed</h2>
+  <div class="card">
+    <p>This project originally asked a different question: whether an inferred neuropeptide connectome improves prediction of <em>measured</em> neuron-to-neuron signal propagation (Randi et al. 2023 data). That data's reuse terms turned out to be unresolved, and rather than use it without a clear license or wait indefinitely on an author reply, the project searched for a license-clear substitute and found one: Atanas, Kim et al.'s (2023, <em>Cell</em>) whole-brain activity dataset, explicitly CC BY 3.0 US licensed. That dataset cannot support a connectome-linked propagation question &mdash; it has no stimulation-response structure and no usable neuron-identity mapping (see <a href="data.html">Data</a>) &mdash; so the question itself had to change, not just the data source.</p>
+    <p>The resulting question is deliberately narrower and already has a close precedent: Atanas &amp; Kim et al. (2023, Fig. 2D) report that linear decoders could predict <em>past</em> velocity from current neural activity but <strong>could not predict future velocity</strong>. This project is a leakage-aware replication and extension of that specific result &mdash; not a claim of new general discovery about brain&ndash;behavior links. See <a href="interpretation.html">Interpretation</a> for exactly how it extends that prior work.</p>
+  </div>
+</section>
+
+<section id="scope">
+  <h2>Scope and honesty up front</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>This is an <strong>observational, associational</strong> comparison. A feature's predictive contribution is evidence of statistical association, never proof that it causes the outcome.</li>
+      <li>This analysis does <strong>not</strong> test signal propagation or connectome structure of any kind. The earlier neuropeptide-connectome direction is <strong>paused, not completed</strong> &mdash; see <a href="status.html">Status</a>.</li>
+      <li>Neuron indices in this activity data are anonymous per-recording numbers, not verified identities &mdash; no claim here links a specific named neuron to a result.</li>
+      <li>Recordings, not animals, are the reporting unit throughout; animal identity is not established from the source files.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="map">
+  <h2>How this site is organized</h2>
+  <div class="card">
+    <table>
+      <tbody>
+        <tr><td style="width:160px;"><a href="data.html">Data</a></td><td>The verified, CC BY 3.0 US licensed source, what it does and doesn't contain, and why the connectome-linked question isn't feasible with it.</td></tr>
+        <tr><td><a href="methods.html">Methods</a></td><td>Time-aware segmentation, forecast targets, population-level features, models, and the leakage-safe evaluation protocol.</td></tr>
+        <tr><td><a href="results.html">Results</a></td><td>Exact, verified numbers for velocity and reversal-onset forecasting, under both evaluation schemes.</td></tr>
+        <tr><td><a href="interpretation.html">Interpretation</a></td><td>What the results do and don't support, and the precise relationship to prior published work.</td></tr>
+        <tr><td><a href="status.html">Status</a></td><td>What's built, tested, and run on real data &mdash; and the paused earlier direction, clearly labeled.</td></tr>
+        <tr><td><a href="reproducibility.html">Reproducibility</a></td><td>Setup, tests, and how to reproduce the analysis.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>

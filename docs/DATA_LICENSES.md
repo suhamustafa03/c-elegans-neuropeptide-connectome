@@ -89,7 +89,106 @@ an open license such as CC0 or CC-BY, this restriction can be relaxed and
 the derived table committed — update this file with the citation for that
 confirmation first.
 
-## 4. Synaptic connectome caveat
+### §3a. OSF Terms of Use review (checked against the E2SYT project specifically)
+
+Before any decision to proceed, the current OSF/COS Terms of Use were
+checked against the E2SYT project's actual metadata (`public: true`,
+`node_license: null`). Source: `TERMS_OF_USE.md` in
+[`CenterForOpenScience/cos.io`](https://github.com/CenterForOpenScience/cos.io)
+(self-dated "last updated November 15, 2026") — the live `osf.io/terms_of_use`
+page is JavaScript-rendered and could not be independently confirmed
+identical to this mirror.
+
+Key findings (verbatim, §8 unless noted): *"If no license is applied by
+the administrator, then no license is included in the metadata and it
+should be considered copyrighted by default"* — which is E2SYT's exact
+situation — in tension with a separate clause in the same section
+granting OSF users a broad license to use public content. §5 explicitly
+permits downloading/modifying content "in a manner consistent with
+copyright law." The Terms do not clearly resolve this tension for a
+specific no-license public project. Assessment (not legal advice):
+local, non-redistributed analysis is reasonably supported; publishing
+aggregate results/figures is a different and more clearly supported
+question under general copyright norms (facts/conclusions, not
+protected expression); **redistributing a derived per-pair table
+publicly remains the least-supported of the three and stays blocked.**
+
+### §3b. Permission requested from the corresponding author — awaiting reply
+
+Given the ambiguity above, a direct permission request was sent to
+Andrew Leifer (leifer@princeton.edu, Leifer Lab, Princeton University —
+identity verified by directly fetching `leiferlab.princeton.edu/contact.php`,
+corroborated by the lab's GitHub organization matching `pumpprobe`'s
+host), asking explicitly about the same three actions: local
+download/analysis, publishing aggregate results, and redistributing a
+derived per-pair table. **As of this update, no reply has been
+received, and no data has been downloaded, accessed, or processed.**
+This project will not proceed with any propagation-data step until a
+reply arrives and is reviewed; no further contact attempts will be made
+while waiting, and no assumption will be drawn from silence.
+
+## 4. Active study's data source: Atanas, Kim et al. 2023 — used, license verified
+
+The original neuropeptide-connectome question is paused (§3 above). The
+project's **active, completed study** (behavior forecasting from
+whole-brain activity — see `docs/BEHAVIOR_FORECAST_RESULTS.md`) uses a
+different, separately-licensed dataset, documented here for the same
+reason as every other source in this file.
+
+- **Source:** Atanas, Kim et al., "Brain-wide representations of behavior
+  spanning multiple timescales and states in *C. elegans*," *Cell* 186(19),
+  4134–4151.e31 (2023). DOI: `10.1016/j.cell.2023.07.035`. PMCID:
+  PMC10836760.
+- **Data record used:** Zenodo record **8185377, version 2**
+  ("CePNEM model analysis data and ANTSUN and microscopy neural network
+  weights"), file `processed_h5.tar.bz2` only (747,188,437 bytes, MD5
+  `f76bb089208db62eb4dd30785b525eda`, verified against the record before
+  use).
+- **License:** **CC BY 3.0 US**, independently confirmed two ways —
+  (1) the rendered Zenodo record page states the license explicitly, and
+  (2) the record's machine-readable API
+  (`https://zenodo.org/api/records/8185377`) returns
+  `metadata.license.id` consistent with CC BY 3.0 US. Both checks were
+  done directly against the record, not inferred from the paper or from
+  other Zenodo records in the same project.
+- **Attribution required under CC BY:** cite the paper above. This
+  project's own site and docs cite it throughout; anyone reusing this
+  project's derived results/code should cite the same paper, not this
+  repository, for the underlying data.
+- **Reuse conditions:** CC BY permits copying, redistribution, and
+  adaptation, including commercial use, with attribution. No additional
+  restriction beyond attribution was found on this specific record.
+- **A newer revision of the same project was checked and explicitly NOT
+  used:** Zenodo record 19388374 (v4 of the same concept DOI,
+  `10.5281/zenodo.8150514`), which adds NeuroPAL neuron-identity label
+  files. That record's license metadata is **null/missing** — confirmed
+  via both its API response (`metadata.license: null`,
+  `metadata.rights: None`) and its rendered page (no License section, no
+  CC badge, no SPDX identifier). Per this project's own data-licensing
+  rule (never assume a license carries across versions), **nothing from
+  v4 is used or committed**, including the neuron-identity label files
+  that would otherwise have let this analysis test neuron-identity-aware
+  features.
+- **Committed to this repository?** **No raw or extracted data.** The
+  747 MB archive and all extracted `.h5` recordings are kept in an
+  external, isolated location outside Git, per this project's standing
+  rule to keep raw/derived propagation-style data out of version control.
+  Only small, aggregated summary statistics (medians/IQRs across
+  recordings — `results/behavior_forecast_summary.txt`,
+  `results/behavior_forecast_paired_comparisons.txt`) are committed; no
+  per-frame, per-neuron, or per-recording raw table is.
+- **What was and wasn't usable:** the archive contains 91 files (80 real
+  recordings used here + 11 "scrambled-control" files in a separate
+  subfolder, kept unused — see `BEHAVIOR_FORECAST_RESULTS.md`). Neuron
+  identities are not usable from the main files (anonymous per-recording
+  indices only) and the identity-mapping file on the v2 record
+  (`dict_neuropal_label.jld2`, also CC BY 3.0 US) could not be decoded
+  with `h5py` alone (its contents use Julia's JLD2 object-serialization
+  format); installing Julia to decode it was explicitly ruled out. This is
+  why all neural features in the active study are population-level, never
+  tied to a specific neuron identity.
+
+## 5. Synaptic connectome caveat
 
 Randi et al. 2023 themselves compared propagation against White et al.
 1986 **and** Witvliet et al. 2021 connectomes (three adult + one L4

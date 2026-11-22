@@ -1,0 +1,59 @@
+<section id="headline">
+  <h2>In one sentence</h2>
+  <div class="card">
+    <p style="margin:0;font-size:1.05rem;"><strong>The behavior-forecasting analysis is complete, run on real CC BY 3.0 US licensed data, with 90 passing tests.</strong> The earlier neuropeptide-connectome direction is paused, not completed &mdash; it never obtained real propagation data and is documented below as-is.</p>
+  </div>
+</section>
+
+<section id="links">
+  <h2>Project links</h2>
+  <div class="card">
+    <p style="margin-top:0;color:var(--text-muted);">The reproducible repository and <code>docs/BEHAVIOR_FORECAST_RESULTS.md</code> are the authoritative record &mdash; this website summarizes and links to them.</p>
+    <table>
+      <tbody>
+        <tr><td style="width:160px;">GitHub repository</td><td class="status-tag pending" style="margin:0;display:inline-block;">Not available yet</td><td>No remote is configured for this local project yet &mdash; nothing has been pushed anywhere.</td></tr>
+        <tr><td>Full results write-up</td><td class="status-tag done" style="margin:0;display:inline-block;">Available</td><td><code>docs/BEHAVIOR_FORECAST_RESULTS.md</code> and <a href="results.html">Results</a> on this site.</td></tr>
+        <tr><td>Data provenance &amp; licenses</td><td class="status-tag done" style="margin:0;display:inline-block;">Available</td><td><a href="data.html">See Data</a> on this site, or <code>docs/DATA_LICENSES.md</code>.</td></tr>
+        <tr><td>Reproducibility instructions</td><td class="status-tag done" style="margin:0;display:inline-block;">Available</td><td><a href="reproducibility.html">See Reproducibility</a> on this site.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="done">
+  <h2>Built, tested, and run on real data</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>License-clear substitute dataset found and independently verified (Zenodo 8185377 v2, CC BY 3.0 US) after the original propagation data's reuse terms proved unresolved.</li>
+      <li>80 real recordings downloaded, MD5-verified, and structurally inspected (neuron counts, timing, behavior channels, missingness) before any modeling.</li>
+      <li>Time-aware gap segmentation, purge-gapped blocked and forward-chaining cross-validation, population-level neural features &mdash; all implemented in <code>src/behavior_forecast/</code> and unit-tested (<code>tests/test_behavior_forecast_segments.py</code>) before running on real data.</li>
+      <li>Full analysis run on all 80 recordings, both CV schemes, both marker-free and marker-present groups &mdash; see <a href="results.html">Results</a>.</li>
+      <li>90 unit tests total, all passing (<code>python -m pytest tests/ -q</code>), including dedicated tests for the forecasting pipeline's features, models, metrics, and the paired-comparison analysis &mdash; not just the windowing/leakage logic.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="earlier-direction">
+  <h2>Earlier direction: neuropeptide connectome &amp; signal propagation &mdash; <span class="status-tag pending" style="margin:0;display:inline-block;">Paused</span></h2>
+  <div class="card not-done">
+    <p>The project originally asked whether an inferred neuropeptide connectome improves prediction of <em>measured</em> signal propagation (Randi et al. 2023 data). That data's reuse terms were ambiguous (full review in <code>docs/DATA_LICENSES.md</code> &sect;3a) and a permission request to the corresponding author went unanswered; rather than use the data without a clear license or wait indefinitely, the project pivoted to the behavior-forecasting question described throughout this site. <strong>This earlier direction is paused, not completed and not abandoned</strong> &mdash; it may be resumed if licensing is resolved. What was built for it:</p>
+    <ul class="plain">
+      <li>Two connectivity layers fetched, cleanly MIT-licensed, committed (White 1986 synaptic/gap-junction; Ripoll-Sanchez et al. neuropeptide connectome).</li>
+      <li>Neuron-ID alignment across conflicting naming conventions (300/302 verified, 2 explained).</li>
+      <li>Leakage-aware neuron-grouped cross-validation, audited against real connectome structure as a stand-in label (not propagation data) &mdash; see the repository's <code>results/split_audit_dry_run.txt</code>.</li>
+      <li>Baseline models, nested-CV hyperparameter selection, a degree-preserving null model, and an explicitly provisional/uncalibrated bootstrap &mdash; all built and unit-tested on synthetic fixtures or structural stand-in data, <strong>never on real propagation data</strong>, because that data was never obtained.</li>
+    </ul>
+    <p class="note">This infrastructure is <strong>not used by, and makes no contribution to,</strong> the behavior-forecasting results reported elsewhere on this site. It is documented here only so the project's history is honest and traceable.</p>
+  </div>
+</section>
+
+<section id="not-done">
+  <h2>Not yet done (behavior-forecasting study)</h2>
+  <div class="card not-done">
+    <ul class="plain">
+      <li>Only one fixed forecast horizon (5s) and history window (10s) were tested; a horizon-sensitivity sweep was not run.</li>
+      <li>The 11 scrambled-control files were not used as a verified negative control (their exact intended role wasn't independently confirmed).</li>
+      <li>No nonlinear model was compared against the ridge/logistic baselines.</li>
+    </ul>
+  </div>
+</section>

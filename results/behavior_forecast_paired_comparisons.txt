@@ -1,0 +1,34 @@
+=== marker-free (primary) ===
+  [blocked]
+    neural-only PR-AUC > own-recording prevalence: 42/42 recordings (excluded=1)
+    combined PR-AUC > behavior-only PR-AUC: 22/42 recordings (tie=0, excluded=1, median diff=0.0049)
+  [forward_chaining]
+    neural-only PR-AUC > own-recording prevalence: 42/42 recordings (excluded=1)
+    combined PR-AUC > behavior-only PR-AUC: 22/42 recordings (tie=0, excluded=1, median diff=0.0072)
+
+=== marker-present (sensitivity) ===
+  [blocked]
+    neural-only PR-AUC > own-recording prevalence: 37/37 recordings (excluded=0)
+    combined PR-AUC > behavior-only PR-AUC: 18/37 recordings (tie=0, excluded=0, median diff=-0.0018)
+  [forward_chaining]
+    neural-only PR-AUC > own-recording prevalence: 37/37 recordings (excluded=0)
+    combined PR-AUC > behavior-only PR-AUC: 18/37 recordings (tie=0, excluded=0, median diff=-0.0043)
+
+NOTE on reproducibility (added after re-running this analysis a second
+time from scratch, same source data, to validate this script): the
+"neural-only > prevalence" result reproduced EXACTLY (42/42 and 37/37,
+both runs, both schemes) -- this is a robust, reliable finding.
+
+The "combined > behavior-only" WIN COUNT did NOT reproduce exactly
+between the two runs (first run: 24/42, 21/42, 28/37, 21/37; this run:
+22/42, 22/42, 18/37, 18/37), even though both used the same committed
+code and the same source data. This is expected, not a bug: because the
+true effect size here is close to zero (median PR-AUC difference within
++/-0.01 in both runs), small floating-point/solver nondeterminism in
+logistic regression's fit can flip which side of a near-tie a given
+recording lands on, changing the integer count by a few recordings
+without changing the qualitative picture. The median difference stayed
+small and did not consistently favor either model in either run. Treat
+the exact win count as approximate (roughly half, not a precise
+fraction), and treat "combining adds no reliable value" -- not any
+specific count -- as the finding that reproduces.

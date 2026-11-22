@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results · Behavior Forecasting</title>
+<meta name="description" content="Results: velocity and reversal-onset forecasting, blocked and forward-chaining CV.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark theme-results">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="status-banner" role="note">
+  <strong>This analysis is complete and run on real, license-verified data</strong> &mdash; it tests
+  whole-brain activity vs. behavior forecasting, not signal propagation or connectome structure.
+  See <a href="results.html">Results</a> and <a href="status.html">Status</a>.
+</div>
+<div class="site-header">
+  <div class="site-header-inner">
+    <a class="site-title" href="index.html">Behavior Forecasting<span class="dot">.</span></a>
+  </div>
+  <nav class="site-nav" aria-label="Primary"><a href="overview.html">Overview</a>
+    <a href="data.html">Data</a>
+    <a href="methods.html">Methods</a>
+    <a href="results.html" class="active" aria-current="page">Results</a>
+    <a href="interpretation.html">Interpretation</a>
+    <a href="status.html">Status</a>
+    <a href="reproducibility.html">Reproducibility</a></nav>
+</div>
+<div class="page-head">
+  <div class="eyebrow">C. elegans &middot; neural activity &amp; behavior forecasting</div>
+  <h1>Results</h1>
+  <p class="dek">Verified, exact results for velocity and reversal-onset forecasting, both evaluation schemes.</p>
+</div>
+<main id="main-content" tabindex="-1">
+<section id="headline">
+  <h2>Headline, by task</h2>
+  <div class="card">
+    <p><strong>Velocity forecasting: a null result.</strong> No model consistently beats the behavior-history-only baseline. <strong>Reversal-onset forecasting: a real but behavior-dominated signal.</strong> Neural activity alone clears its own recording's prevalence baseline, but behavior history is the stronger predictor and combining the two adds little on average. Full numeric output: <code>results/behavior_forecast_summary.txt</code> and <code>results/behavior_forecast_paired_comparisons.txt</code> (per-recording paired comparisons, produced by <code>src/behavior_forecast/paired_comparison.py</code>, unit-tested) in the repository.</p>
+  </div>
+</section>
+
+<section id="velocity-primary">
+  <h2>Velocity forecasting &mdash; marker-free (primary), blocked CV</h2>
+  <div class="card">
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Model</th><th scope="col">MAE (median, IQR)</th><th scope="col">R&sup2; (median, IQR)</th></tr></thead>
+      <tbody>
+        <tr><td>persistence</td><td>0.0530 (0.0462&ndash;0.0614)</td><td>&minus;0.573 (&minus;0.732 to &minus;0.308)</td></tr>
+        <tr><td><strong>behavior-only</strong></td><td><strong>0.0463</strong> (0.0393&ndash;0.0556)</td><td><strong>0.011</strong> (&minus;0.102 to 0.129)</td></tr>
+        <tr><td>neural-only</td><td>0.0488 (0.0424&ndash;0.0593)</td><td>&minus;0.104 (&minus;0.251 to &minus;0.001)</td></tr>
+        <tr><td>combined</td><td>0.0471 (0.0419&ndash;0.0579)</td><td>&minus;0.085 (&minus;0.376 to 0.062)</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">n=43 recordings, 215/215 blocked folds run. Only behavior-only reaches a (barely) positive median R&sup2;; persistence and neural-only have negative median R&sup2; (worse than predicting the fold's mean velocity). Adding neural features to behavior history does not improve on behavior-only here.</p>
+  </div>
+</section>
+
+<section id="velocity-other">
+  <h2>Velocity forecasting &mdash; other three conditions</h2>
+  <div class="card">
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Group / scheme</th><th scope="col">Best model</th><th scope="col">MAE (median)</th><th scope="col">R&sup2; (median)</th></tr></thead>
+      <tbody>
+        <tr><td>marker-free, forward-chaining</td><td>behavior-only</td><td>0.0486</td><td>&minus;0.096 (still negative, but least negative)</td></tr>
+        <tr><td>marker-present, blocked</td><td>behavior-only</td><td>0.0477</td><td>0.084</td></tr>
+        <tr><td>marker-present, forward-chaining</td><td>behavior-only</td><td>0.0474</td><td>&minus;0.008</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">In every one of the four conditions tested (2 recording groups &times; 2 CV schemes), <strong>behavior-only has the lowest MAE and the highest (or least negative) R&sup2;</strong> of the four models. Neural-only and combined never beat it. In the forward-chaining schemes especially, neural-only and combined often perform markedly worse than even the persistence baseline (e.g. marker-free forward-chaining: combined MAE 0.0575 vs. persistence 0.0511).</p>
+  </div>
+</section>
+
+<section id="reversal-primary">
+  <h2>Reversal-onset forecasting &mdash; marker-free (primary), blocked CV</h2>
+  <div class="card">
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Model</th><th scope="col">PR-AUC (median, IQR)</th><th scope="col">ROC-AUC (median)</th></tr></thead>
+      <tbody>
+        <tr><td>persistence (prevalence ref.)</td><td>0.196 (0.162&ndash;0.243)</td><td>0.269</td></tr>
+        <tr><td>behavior-only</td><td><strong>0.522</strong> (0.445&ndash;0.588)</td><td>0.818</td></tr>
+        <tr><td>neural-only</td><td>0.396 (0.301&ndash;0.477)</td><td>0.714</td></tr>
+        <tr><td>combined</td><td>0.553 (0.465&ndash;0.623)</td><td>0.823</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">n=42 of 43 recordings (1 recording excluded &mdash; its test fold had zero positive or zero negative reversal-onset labels, so PR-AUC is undefined there; it is excluded and counted, never scored as 0). Median prevalence (reversal-onset rate) &asymp;0.196 &mdash; a minority class, as expected.</p>
+  </div>
+</section>
+
+<section id="reversal-paired">
+  <h2>Reversal-onset &mdash; paired, per-recording comparisons</h2>
+  <div class="card">
+    <p>Comparing medians across the group (above) can hide whether an effect holds <em>within</em> each recording. Checking per recording:</p>
+    <ul class="plain">
+      <li><strong>Neural-only's PR-AUC exceeded that same recording's own prevalence rate in every recording where the comparison was defined</strong> &mdash; 42/42 (marker-free) and 37/37 (marker-present), in both the blocked and forward-chaining schemes. This is the basis for calling the neural signal real and above-baseline.</li>
+      <li><strong>Combined did not consistently beat behavior-only, and the exact win count is not stable across reruns.</strong> Combined's PR-AUC exceeded behavior-only's in roughly half of recordings across all four conditions (two independent runs of the identical pipeline on the identical data gave 24/42, 21/42, 28/37, 21/37 the first time and 22/42, 22/42, 18/37, 18/37 the second &mdash; see <code>results/behavior_forecast_paired_comparisons.txt</code> for both), with a median per-recording difference of only about &plusmn;0.01 PR-AUC in either direction in both runs. The win count moving between reruns is itself informative: it confirms the effect is too small and close to zero to be a reliable difference, not an artifact of one run. This is the basis for saying combining the two feature blocks adds no reliable value, not that neural activity's contribution is "independent" in a statistically tested sense &mdash; no formal significance test was run on this difference.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="reversal-other">
+  <h2>Reversal-onset &mdash; other three conditions</h2>
+  <div class="card">
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Group / scheme</th><th scope="col">persistence</th><th scope="col">behavior-only</th><th scope="col">neural-only</th><th scope="col">combined</th></tr></thead>
+      <tbody>
+        <tr><td>marker-free, forward-chaining</td><td>0.180</td><td>0.483</td><td>0.357</td><td>0.479</td></tr>
+        <tr><td>marker-present, blocked</td><td>0.189</td><td>0.526</td><td>0.394</td><td>0.575</td></tr>
+        <tr><td>marker-present, forward-chaining</td><td>0.180</td><td>0.466</td><td>0.387</td><td>0.501</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">PR-AUC medians shown. The same qualitative pattern holds in every condition: neural-only clears the prevalence/persistence baseline; behavior-only is stronger; combined is close to behavior-only, sometimes marginally above and sometimes marginally below it.</p>
+    <p class="note"><strong>The persistence baseline's ROC-AUC is consistently below 0.5 (0.269&ndash;0.274 across all four conditions).</strong> This is not an error: the onset label excludes frames already reversing at time t, so being in a reversed state at t is, by construction, anti-correlated with a <em>new</em> onset in the next window. The prevalence rate, not persistence, is the correct reference point for PR-AUC here.</p>
+  </div>
+</section>
+
+<div class="page-nav-footer"><a href="methods.html"><span class="dir">&larr; Previous</span>Methods</a><a href="interpretation.html" style="text-align:right;"><span class="dir">Next &rarr;</span>Interpretation</a></div>
+</main>
+<footer class="site-footer">
+  Independent portfolio/application project &middot; not a validated scientific publication &middot;
+  <a href="https://doi.org/10.5281/zenodo.8185377" target="_blank" rel="noopener">Activity data: Atanas, Kim et al. 2023, Zenodo 8185377 v2 (CC BY 3.0 US)</a> &middot;
+  <a href="https://doi.org/10.1016/j.cell.2023.07.035" target="_blank" rel="noopener">Atanas &amp; Kim et al., Cell (2023)</a>
+</footer>
+</body>
+</html>

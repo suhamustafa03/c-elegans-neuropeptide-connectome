@@ -1,0 +1,61 @@
+<section id="segmentation">
+  <h2>Time-aware segmentation</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p>Recordings are not sampled on a perfectly uniform time grid: 18 of 80 recordings contain exactly one real-time discontinuity (a pause), in every case splitting the recording roughly in half. Segmentation uses each recording's own actual timestamps, not frame-index counts: a gap larger than 3&times; a recording's own median inter-frame interval starts a new segment. All windows, splits, and purge gaps are built from only the largest contiguous segment per recording.</p>
+    <p class="note"><strong>112,251 of 126,351 total frames were kept; 14,100 were discarded (11.2%).</strong></p>
+  </div>
+</section>
+
+<section id="targets">
+  <h2>Forecast targets and horizon</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p><strong>Forecast horizon: 5 seconds</strong> (&asymp;8 frames, computed per recording from its own sampling interval &mdash; median &asymp;0.6s/frame across recordings). <strong>History window: 10 seconds</strong> of trailing behavior/neural features. Inputs at time t use only data with timestamp &le; t &mdash; this is a genuine forecast, never same-time decoding.</p>
+    <p><strong>Velocity target:</strong> velocity(t+h), continuous regression. <strong>Reversal-onset target:</strong> binary &mdash; 1 if a reversal begins strictly within (t, t+h], else 0 (derived from the reversal-state channel).</p>
+  </div>
+</section>
+
+<section id="features">
+  <h2>Features &mdash; population-level only</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p>Behavior-history features: current velocity/angular-velocity/reversal state plus their trailing-window mean, spread, and net change. Neural features are <strong>population-level</strong> &mdash; overall activity mean/variance plus per-recording PCA components fit on the training fold only &mdash; <strong>never tied to a specific neuron index</strong>, since no verified identity mapping links ROI indices across recordings (see <a href="data.html">Data</a>).</p>
+  </div>
+</section>
+
+<section id="models">
+  <h2>Models compared</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p>Four conditions per task: <strong>persistence</strong> (carries forward the current value/state, no fitting), <strong>behavior-history-only</strong>, <strong>neural-population-only</strong>, and <strong>combined</strong> (both feature blocks). Velocity uses ridge regression; reversal-onset uses logistic regression. All scaling and PCA are fit on the training fold only and applied, never refit, to the held-out fold.</p>
+  </div>
+</section>
+
+<section id="splits">
+  <h2>Evaluation protocol &mdash; two schemes, purge-gapped</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p><strong>Unit of analysis: the recording</strong> (80 of them), not frame, not animal. Within each recording's largest segment: 5 contiguous time-blocks, each held out once.</p>
+    <p><strong>Purge gap: 15 seconds</strong> (10s history + 5s horizon) excluded from training on both sides of every test block, so no input/target window crosses a train/test boundary.</p>
+    <p><strong>Primary scheme &mdash; blocked out-of-sample prediction:</strong> training may include blocks chronologically after a given test block. This is the main reported protocol.</p>
+    <p><strong>Secondary scheme &mdash; forward-chaining:</strong> training restricted to data strictly before the test block (fully prospective; the first block is skipped, since it has no prior data). Reported alongside the primary scheme throughout <a href="results.html">Results</a>, not instead of it.</p>
+    <p class="note">Both schemes are pre-specified before this analysis was run &mdash; "pre-specified before outcome analysis," not formally pre-registered.</p>
+  </div>
+</section>
+
+<section id="reversal-metrics">
+  <h2>Reversal-onset metrics &mdash; rare-event aware</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p>Reversal onset is a minority class (median prevalence &asymp;0.18&ndash;0.20 across recordings). PR-AUC and ROC-AUC are both reported alongside the recording's own prevalence rate as the reference baseline &mdash; not AUROC alone. <strong>Any fold with zero positive or zero negative test labels is excluded and counted, never scored as PR-AUC&nbsp;=&nbsp;0.</strong> Exactly one such fold was excluded in each recording group (see <a href="results.html">Results</a> for the exact count).</p>
+  </div>
+</section>
+
+<section id="stimulation-policy">
+  <h2>Marker-free / marker-present policy</h2>
+  <div class="card">
+    <span class="status-tag done">Done &amp; verified</span>
+    <p>The 43 marker-free recordings are the <strong>primary analysis</strong>. The 37 marker-present recordings run through the identical pipeline as a <strong>separate sensitivity analysis</strong>, reported side-by-side but never pooled into the primary numbers.</p>
+  </div>
+</section>

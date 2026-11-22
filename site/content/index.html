@@ -1,0 +1,210 @@
+<section class="landing-hero" id="landing-hero" aria-label="Welcome">
+  <canvas id="neuron-canvas" aria-hidden="true"></canvas>
+  <div class="landing-content">
+    <p class="landing-eyebrow">C. elegans &middot; neural activity &amp; behavior forecasting</p>
+    <h1 class="landing-title">Does whole-brain activity help forecast future behavior?</h1>
+    <p class="landing-sub">Testing whether current whole-brain neural population activity improves leakage-aware, time-blocked forecasting of future locomotor velocity and reversal onset in <em>C. elegans</em>, beyond a behavior-history-only baseline.</p>
+    <p class="landing-progress-note">&#9888; An earlier neuropeptide-connectome direction is paused, not completed &mdash; see <a href="status.html" style="color:inherit;text-decoration:underline;">Status</a>.</p>
+    <div class="landing-actions">
+      <a class="landing-cta" id="landing-cta" href="overview.html">Dive into the project</a>
+      <a class="landing-secondary" href="overview.html">Project overview &amp; research question &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var canvas = document.getElementById("neuron-canvas");
+  var hero = document.getElementById("landing-hero");
+  if (!canvas || !hero) return;
+  var ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0;
+  var N = 42;
+  var CONNECT_DIST = 150;
+  var PULSE_SPEED = 0.0016; // progress per ms
+  var particles = [];
+  var connected = {}; // pairKey -> bool, tracked between frames
+  var pulses = []; // {a, b, start, color}
+  var rafId = null;
+  var lastTime = 0;
+
+  var COLORS = ["#ef4444", "#3b82f6"]; // red, blue
+
+  function resize() {
+    var rect = hero.getBoundingClientRect();
+    W = Math.max(1, rect.width);
+    H = Math.max(1, rect.height);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    particles.forEach(function (p) {
+      p.x = Math.min(p.x, W);
+      p.y = Math.min(p.y, H);
+    });
+  }
+
+  function initParticles() {
+    particles = [];
+    for (var i = 0; i < N; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.18,
+        r: 1.6 + Math.random() * 1.6,
+        color: COLORS[i % 2 === 0 ? 0 : 1],
+        glow: 0,
+      });
+    }
+  }
+
+  function pairKey(i, j) {
+    return i < j ? i + "_" + j : j + "_" + i;
+  }
+
+  function drawStaticFrame() {
+    ctx.fillStyle = "#06060c";
+    ctx.fillRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      for (var j = i + 1; j < particles.length; j++) {
+        var a = particles[i], b = particles[j];
+        var dx = a.x - b.x, dy = a.y - b.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          var op = 0.22 * (1 - dist / CONNECT_DIST);
+          ctx.strokeStyle = "rgba(160,170,210," + op.toFixed(3) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    particles.forEach(function (p) {
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.85;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  function step(now) {
+    var dt = lastTime ? now - lastTime : 16;
+    lastTime = now;
+
+    ctx.fillStyle = "rgba(6,6,12,0.22)";
+    ctx.fillRect(0, 0, W, H);
+
+    particles.forEach(function (p) {
+      p.x += p.vx * dt * 0.06;
+      p.y += p.vy * dt * 0.06;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      p.x = Math.max(0, Math.min(W, p.x));
+      p.y = Math.max(0, Math.min(H, p.y));
+      if (p.glow > 0) p.glow = Math.max(0, p.glow - dt * 0.0015);
+    });
+
+    var nowConnected = {};
+    for (var i = 0; i < particles.length; i++) {
+      for (var j = i + 1; j < particles.length; j++) {
+        var a = particles[i], b = particles[j];
+        var dx = a.x - b.x, dy = a.y - b.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECT_DIST) {
+          var key = pairKey(i, j);
+          nowConnected[key] = true;
+          var op = 0.18 * (1 - dist / CONNECT_DIST);
+          ctx.strokeStyle = "rgba(160,170,210," + op.toFixed(3) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+
+          if (!connected[key] && pulses.length < 10) {
+            a.glow = 1;
+            b.glow = 1;
+            pulses.push({ i: i, j: j, start: now, color: Math.random() < 0.5 ? COLORS[0] : COLORS[1] });
+          }
+        }
+      }
+    }
+    connected = nowConnected;
+
+    pulses = pulses.filter(function (pulse) {
+      var a = particles[pulse.i], b = particles[pulse.j];
+      var dx = a.x - b.x, dy = a.y - b.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist >= CONNECT_DIST * 1.3) return false;
+      var progress = (now - pulse.start) * PULSE_SPEED;
+      if (progress >= 1) return false;
+      var px = a.x + (b.x - a.x) * progress;
+      var py = a.y + (b.y - a.y) * progress;
+      ctx.beginPath();
+      ctx.fillStyle = pulse.color;
+      ctx.globalAlpha = 0.9 * (1 - Math.abs(progress - 0.5) * 0.6);
+      ctx.arc(px, py, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      return true;
+    });
+
+    particles.forEach(function (p) {
+      var r = p.r + p.glow * 2.2;
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.75 + p.glow * 0.25;
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    rafId = requestAnimationFrame(step);
+  }
+
+  function start() {
+    if (rafId !== null) return;
+    lastTime = 0;
+    rafId = requestAnimationFrame(step);
+  }
+  function stop() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  var resizeTimer = null;
+  function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      resize();
+      if (reduceMotion) drawStaticFrame();
+    }, 120);
+  }
+
+  resize();
+  initParticles();
+  if (reduceMotion) {
+    drawStaticFrame();
+  } else {
+    start();
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stop();
+      else start();
+    });
+  }
+  window.addEventListener("resize", onResize);
+})();
+</script>

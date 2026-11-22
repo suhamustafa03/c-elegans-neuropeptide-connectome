@@ -1,0 +1,61 @@
+<section id="setup">
+  <h2>Setup</h2>
+  <div class="card">
+    <pre><code>python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+    <p class="note">This project's own <code>requirements.txt</code> intentionally does not include <code>h5py</code> &mdash; reading the raw <code>.h5</code> recordings is kept to a separate, throwaway environment outside this repository, since the raw data itself is never committed (see <a href="data.html">Data</a>).</p>
+  </div>
+</section>
+
+<section id="tests">
+  <h2>Run the tests</h2>
+  <div class="card">
+    <pre><code>PYTHONPATH=src python -m pytest tests/ -q</code></pre>
+    <p class="note">90 tests total: 52 covering the active behavior-forecasting study on deterministic synthetic fixtures &mdash; gap segmentation, purge-gapped blocked/forward-chaining folds, feature extraction, models (including the single-class classifier fallback), metrics (including the undefined-PR-AUC case), the end-to-end per-recording pipeline, and the paired-comparison analysis &mdash; plus the 38 original tests for the paused connectome project's infrastructure (neuron-ID alignment, split strategies, models, evaluation, nulls) on real connectome data or synthetic fixtures. None run on the real behavior-forecasting recordings themselves, since those are kept outside Git; <code>load_recording</code> (the one function that reads real <code>.h5</code> files) is intentionally not unit-tested for the same reason.</p>
+  </div>
+</section>
+
+<section id="data-fetch">
+  <h2>Reproducing the behavior-forecasting analysis</h2>
+  <div class="card">
+    <ol>
+      <li>Download <code>processed_h5.tar.bz2</code> from <a href="https://doi.org/10.5281/zenodo.8185377" target="_blank" rel="noopener">Zenodo record 8185377, v2</a> (747,188,437 bytes) to a location <strong>outside</strong> this repository, and verify its MD5 (<code>f76bb089208db62eb4dd30785b525eda</code>).</li>
+      <li>Extract it, and in a separate, isolated environment (not this project's own <code>.venv</code>) install <code>h5py</code>, <code>numpy</code>, <code>pandas</code>, and <code>scikit-learn</code>.</li>
+      <li>Run the pipeline in <code>src/behavior_forecast/pipeline.py</code> (<code>run_recording</code>, <code>load_recording</code>) against each extracted <code>.h5</code> file, using that isolated environment's Python so it can import <code>src/behavior_forecast</code> alongside <code>h5py</code>.</li>
+      <li>Aggregate per-recording results (median/IQR across recordings, split by marker-free vs. marker-present and by CV scheme) &mdash; see <code>docs/BEHAVIOR_FORECAST_RESULTS.md</code> for the exact protocol this repository's own run followed.</li>
+    </ol>
+    <p class="note">The full, exact numeric output from this repository's own run is committed at <code>results/behavior_forecast_summary.txt</code> &mdash; only the aggregated, recording-level summary statistics, never raw per-frame or per-neuron data.</p>
+  </div>
+</section>
+
+<section id="earlier-direction-repro">
+  <h2>Reproducing the paused connectome project's infrastructure</h2>
+  <div class="card">
+    <pre><code>python src/fetch_connectomes.py
+python src/audit_splits.py</code></pre>
+    <p class="note">Fetches the two MIT-licensed connectivity layers and reproduces <code>results/split_audit_dry_run.txt</code> (a structural stand-in audit, not a propagation-data result). See <a href="status.html">Status</a> for why this direction is paused.</p>
+  </div>
+</section>
+
+<section id="file-tree">
+  <h2>Repository structure</h2>
+  <div class="card">
+    <div class="file-tree">docs/
+  BEHAVIOR_FORECAST_RESULTS.md  Active study: protocol, provenance, results
+  PROPOSAL.md                   Paused connectome project: feasibility report
+  DATA_LICENSES.md              License status of every data source
+  fetch_propagation_data.md     Paused project's unexecuted data-fetch steps
+data/raw/                       Paused project's fetched connectome CSVs (MIT)
+data/derived/                  Paused project's propagation table (gitignored)
+results/
+  behavior_forecast_summary.txt  Active study: full numeric results
+  split_audit_dry_run.txt        Paused project: structural stand-in audit
+src/
+  behavior_forecast/            Active study: segmentation, features, models, metrics, pipeline
+  neuron_id.py  features.py  splits.py  audit_splits.py      (paused project)
+  models.py  evaluate.py  nulls.py  fetch_connectomes.py     (paused project)
+tests/                           90 tests total
+site/                            This website</div>
+  </div>
+</section>

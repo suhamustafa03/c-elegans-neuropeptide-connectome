@@ -1,5 +1,14 @@
 # Generating the propagation target data (manual, local step)
 
+> **Current status: on hold, pending author permission.** A permission
+> request was sent to the corresponding author (Andrew Leifer) asking
+> whether (1) downloading and analyzing the data locally, (2) publishing
+> aggregate results/figures, and (3) redistributing a derived per-pair
+> table are permitted. **No data has been downloaded, accessed, or
+> processed.** See `docs/DATA_LICENSES.md` §3 for the full reasoning and
+> §5 for the request itself. Do not proceed with any step below until
+> that reply arrives and is reviewed.
+
 This step is **not automated by any script in this repository** and its
 output is **never committed**. See `docs/DATA_LICENSES.md` for why: the
 underlying OSF data and the `worm-functional-connectivity` code have no
@@ -107,7 +116,14 @@ unless you later confirm the source data's license permits redistribution
 python src/build_pair_dataset.py
 ```
 
-(This script — not yet written as of this commit — will join
+This script now exists (`src/build_pair_dataset.py`) and joins
 `data/derived/propagation_pairs.csv` against the connectome layers in
 `data/raw/`, using `src/neuron_id.py` for alignment, to produce the final
-modeling dataset. See the repository's README for current status.)
+modeling dataset. **It has only been tested against synthetic fixture
+rows matching the documented schema above** (see
+`tests/test_build_pair_dataset.py`) — it has never been run against real
+propagation data, because that data has not been obtained. It also
+deliberately refuses to run if the input table has no `q` column (Randi
+et al.'s significance value): it will not silently substitute a cruder
+threshold derived from `response_rate` alone, since that would
+misrepresent the paper's actual "functionally connected" definition.
